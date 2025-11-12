@@ -9,3 +9,10 @@ services:
       - "9001:9001"
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: unless-stopped
+    networks:
+      - iot_network
+
+networks:
+  iot_network:
+    driver: bridge
