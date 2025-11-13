@@ -1,87 +1,116 @@
-# 🏠 Smart Home IoT System
+🏠 Smart Home IoT System
+📘 Project Overview
 
-## 📘 Project Overview
-The **Smart Home IoT System** is a cloud-connected solution that allows users to monitor and control home devices such as temperature sensors and lights.  
-The project integrates **IoT devices**, an **MQTT broker**, a **FastAPI backend**, and a **PostgreSQL database**, all running in **Docker containers**.
+The Smart Home IoT System is a fully containerized smart home environment that allows users to monitor and control IoT devices such as temperature/humidity sensors and smart lights.
 
----
+The system contains:
 
-## 🧩 System Components
+IoT devices (simulator)
 
-| Component | Description |
-|------------|-------------|
-| **FastAPI Backend** | Provides REST API endpoints, processes IoT data, and stores it in PostgreSQL. |
-| **PostgreSQL Database** | Stores sensor data such as temperature and humidity readings. |
-| **MQTT Broker (Mosquitto)** | Handles message communication between IoT devices and the backend. |
-| **IoT Device Simulator** | Simulates a smart sensor device that sends temperature and humidity data and can receive control commands. |
-| **Postman Collection** | Used to test and verify API endpoints. |
+MQTT communication layer
 
-All services run in Docker and communicate through the shared `iot_network`.
+FastAPI backend
 
----
+PostgreSQL database
 
-## ⚙️ Technologies Used
-- **Python 3.11**
-- **FastAPI**
-- **PostgreSQL**
-- **Eclipse Mosquitto (MQTT)**
-- **paho-mqtt**
-- **Docker Compose**
+All components run inside Docker containers, allowing easy deployment, modularity, and realistic IoT behavior.
 
----
+🧩 System Components
+Component	Description
+FastAPI Backend	REST API for device control, user authentication, and sensor data processing.
+PostgreSQL Database	Stores all incoming sensor data for long-term tracking.
+Mosquitto MQTT Broker	Handles publish/subscribe messaging between devices and backend.
+IoT Device Simulator	Python script sending sensor data and receiving commands.
+Postman/Swagger UI	Used to test API endpoints easily.
 
-## 🧱 System Architecture
+All containers communicate inside the shared iot_network.
 
-### 🗺️ System Context Diagram
-![System Context Diagram](docs/System_Context_Diagram.png)
+⚙️ Technologies Used
 
-### 🧩 Container Diagram
-![Container Diagram](docs/Container_Diagram.png)
+Python 3.11
 
----
+FastAPI
 
-## 🚀 Setup Guide
+PostgreSQL
 
-```bash
-# 1️⃣ Clone the repository
+Eclipse Mosquitto (MQTT Broker)
+
+paho-mqtt
+
+Docker & Docker Compose
+
+🧱 System Architecture
+🗺️ System Context Diagram
+
+🧩 Container Diagram
+
+🚀 Setup Guide
+1️⃣ Clone the project
 git clone https://github.com/<your-username>/Iot-Final-Project.git
 cd Iot-Final-Project
 
-# 2️⃣ Start all containers (API, PostgreSQL, and MQTT broker)
-cd api
-docker-compose up
+2️⃣ Start all backend services (API + MQTT + Database)
+docker compose up -d --build
 
-# 3️⃣ Access the FastAPI documentation
-# Open your browser and go to:
-# 👉 http://localhost:8000/docs
 
-# 4️⃣ Run the IoT device simulator
-cd ../device
+This starts:
+
+smart_home_api
+
+postgres_db
+
+mqtt-broker
+
+3️⃣ Open the API Documentation
+http://localhost:8000/docs
+
+
+You can test login, send commands, and query device data directly from here.
+
+4️⃣ Run the IoT Device Simulator
+cd device
 python simple_device.py
 
-# ✅ REST API Endpoints
-# -----------------------------------
-# Method | Endpoint              | Description
-# -----------------------------------
-# GET    | /                     | Health check for the API
-# POST   | /data                 | Insert new sensor data
-# GET    | /data                 | Retrieve stored sensor data
-# POST   | /command/{device_id}  | Send command to IoT device via MQTT
 
-# 💾 Database Schema
-# -----------------------------------
-# Table: sensor_data
-#
-# Column       | Type              | Description
-# -----------------------------------------------
-# id           | SERIAL PRIMARY KEY | Unique record ID
-# device_id    | VARCHAR(50)        | IoT device identifier
-# temperature  | FLOAT              | Temperature reading
-# humidity     | FLOAT              | Humidity reading
-# timestamp    | TIMESTAMP          | Time of data collection
+The simulator will:
 
-# 🧭 Business Context
-# -----------------------------------
-# The Smart Home IoT Project enhances comfort,
-# energy efficiency, and security for users through
-# automation, real-time monitoring, and cloud data storage.
+Publish temperature & humidity data to MQTT
+
+Receive commands from the backend (e.g., turn on/off)
+
+📡 API Endpoints Overview
+Method	Endpoint	Description
+GET	/	API health check
+POST	/login	Returns JWT access token
+GET	/data	Retrieve stored sensor data (requires token)
+POST	/data	Insert sensor data manually (requires token)
+POST	/command/{device_id}	Sends a control command to device via MQTT
+💾 Database Schema
+Table: sensor_data
+Column	Type	Description
+id	SERIAL PRIMARY KEY	Unique row ID
+device_id	VARCHAR(50)	Device identifier
+temperature	FLOAT	Temperature value
+humidity	FLOAT	Humidity value
+timestamp	TIMESTAMP	Date/time of reading
+🧭 Business Context Summary
+
+The Smart Home IoT System aims to improve daily comfort and efficiency by providing:
+
+Real-time monitoring
+
+Remote device control
+
+Local and reliable data storage
+
+Easy expandability for additional IoT devices
+
+A realistic IoT architecture using modern technologies
+
+The system is ideal for educational use, demonstrating how MQTT, Docker, and FastAPI work together in a real IoT environment.
+
+👨‍💻 Authors
+
+Deniz Utku Çelebi
+Utku Deniz Duman
+Collegium Da Vinci – IoT & Cloud Computing Project
