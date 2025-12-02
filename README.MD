@@ -1,116 +1,215 @@
 🏠 Smart Home IoT System
-📘 Project Overview
+IoT & Cloud Computing Final Project – Collegium Da Vinci
 
-The Smart Home IoT System is a fully containerized smart home environment that allows users to monitor and control IoT devices such as temperature/humidity sensors and smart lights.
+A fully functional cloud-enabled Smart Home IoT System designed for real-time monitoring and remote control of devices.
+The project integrates:
 
-The system contains:
+IoT device simulation
 
-IoT devices (simulator)
+MQTT messaging
 
-MQTT communication layer
+Cloud-hosted FastAPI backend
 
-FastAPI backend
+Azure PostgreSQL database
 
-PostgreSQL database
+Swagger & Postman testing interfaces
 
-All components run inside Docker containers, allowing easy deployment, modularity, and realistic IoT behavior.
+The backend runs on Azure App Service, the MQTT Broker on Azure VM, and all data is securely stored in Azure PostgreSQL.
 
-🧩 System Components
-Component	Description
-FastAPI Backend	REST API for device control, user authentication, and sensor data processing.
-PostgreSQL Database	Stores all incoming sensor data for long-term tracking.
-Mosquitto MQTT Broker	Handles publish/subscribe messaging between devices and backend.
-IoT Device Simulator	Python script sending sensor data and receiving commands.
-Postman/Swagger UI	Used to test API endpoints easily.
+🚀 Project Overview
+✔ IoT Device Simulator
 
-All containers communicate inside the shared iot_network.
+Sends temperature & humidity data every 5 seconds
 
-⚙️ Technologies Used
+Receives device commands (light_on, light_off) via MQTT
 
-Python 3.11
+✔ MQTT Broker (Mosquitto on Azure VM)
 
-FastAPI
+Handles all IoT messaging
 
-PostgreSQL
+API subscribes to sensor data
 
-Eclipse Mosquitto (MQTT Broker)
+Device simulator subscribes to commands
 
-paho-mqtt
+✔ Cloud Backend — FastAPI (Azure App Service)
 
-Docker & Docker Compose
+REST API for device control & data management
 
-🧱 System Architecture
-🗺️ System Context Diagram
+Publishes MQTT commands
 
-🧩 Container Diagram
+JWT authentication
 
-🚀 Setup Guide
-1️⃣ Clone the project
-git clone https://github.com/<your-username>/Iot-Final-Project.git
-cd Iot-Final-Project
+Saves all sensor data into Azure PostgreSQL
 
-2️⃣ Start all backend services (API + MQTT + Database)
-docker compose up -d --build
+✔ Azure PostgreSQL Flexible Server
 
+Stores all sensor readings
 
-This starts:
+SSL-secured database connection
 
-smart_home_api
+Accessible only through API
 
-postgres_db
+✔ Swagger API Documentation (Cloud)
 
-mqtt-broker
+🔗 https://smart-home-api-fjegf4a9hce4fwcz.francecentral-01.azurewebsites.net/docs
 
-3️⃣ Open the API Documentation
-http://localhost:8000/docs
+✔ Postman Collection
 
+Used to test:
 
-You can test login, send commands, and query device data directly from here.
+Login
 
-4️⃣ Run the IoT Device Simulator
+Retrieve data
+
+Add data manually
+
+Send MQTT commands
+
+🧱 System Architecture (High-Level Overview)
+IoT Device → MQTT Broker (Azure VM) → Cloud API (Azure App Service) → Azure PostgreSQL
+
+🖥 IoT Device Simulator
+
+Publishes sensor data → smart_home/sensor_data
+
+Subscribes to → smart_home/commands/device_001
+
+☁ MQTT Broker (Azure VM)
+
+Routes data between devices and backend
+
+🌐 FastAPI Backend (Cloud)
+
+Exposes REST endpoints
+
+Handles JWT auth
+
+Saves incoming MQTT data
+
+Sends commands to devices
+
+🗄 Azure PostgreSQL
+
+Stores all sensor data in sensor_data table
+
+🧩 C4 Architecture Diagrams
+
+✔ System Context Diagram
+✔ Container Diagram
+
+Both diagrams are included in the repository and document how cloud, IoT, and software layers interact.
+
+🔐 Authentication
+
+The API uses JWT-based authentication.
+
+Login
+POST /login
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+Use the token in all protected endpoints:
+Authorization: Bearer <token>
+
+📡 Main API Endpoints
+Method	Endpoint	Description
+GET	/	Health check
+POST	/login	Obtain JWT token
+GET	/data	Get all sensor data
+POST	/data	Insert data manually
+POST	/command/{device_id}	Send MQTT command
+
+Full docs:
+🔗 https://smart-home-api-fjegf4a9hce4fwcz.francecentral-01.azurewebsites.net/docs
+
+🖥️ Running the Device Simulator
+
+Open terminal:
+
 cd device
 python simple_device.py
 
 
-The simulator will:
+The device will:
 
-Publish temperature & humidity data to MQTT
+Publish sensor data
 
-Receive commands from the backend (e.g., turn on/off)
+Listen for MQTT commands
 
-📡 API Endpoints Overview
-Method	Endpoint	Description
-GET	/	API health check
-POST	/login	Returns JWT access token
-GET	/data	Retrieve stored sensor data (requires token)
-POST	/data	Insert sensor data manually (requires token)
-POST	/command/{device_id}	Sends a control command to device via MQTT
-💾 Database Schema
+Send data to the cloud API
+
+Example output:
+
+[MQTT PUBLISHED] {temperature: 24.8, humidity: 55.1}
+[API] 200 OK
+[COMMAND RECEIVED] light_on
+
+🗄 Database Schema (Azure PostgreSQL)
+
 Table: sensor_data
+
 Column	Type	Description
 id	SERIAL PRIMARY KEY	Unique row ID
-device_id	VARCHAR(50)	Device identifier
-temperature	FLOAT	Temperature value
-humidity	FLOAT	Humidity value
-timestamp	TIMESTAMP	Date/time of reading
-🧭 Business Context Summary
+device_id	VARCHAR	Device identifier
+temperature	FLOAT	Temperature reading
+humidity	FLOAT	Humidity reading
+timestamp	TIMESTAMP	Time of reading
+📬 Postman Collection
 
-The Smart Home IoT System aims to improve daily comfort and efficiency by providing:
+Included as:
+📁 postman/SmartHome.postman_collection.json
 
-Real-time monitoring
+Collection includes:
 
-Remote device control
+Login request
 
-Local and reliable data storage
+Retrieve sensor data
 
-Easy expandability for additional IoT devices
+Insert manual data
 
-A realistic IoT architecture using modern technologies
+Send MQTT commands
 
-The system is ideal for educational use, demonstrating how MQTT, Docker, and FastAPI work together in a real IoT environment.
+🧭 Business Context & User Stories
+Target Users
+
+Smart home owners
+
+Developers
+
+System administrators
+
+User Stories
+
+1️⃣ As a user, I want to monitor real-time sensor updates so I can understand conditions at home.
+2️⃣ As a user, I want to control home devices remotely so I can turn lights on/off from anywhere.
+3️⃣ As a business owner, I want historical data stored so I can analyze trends.
+4️⃣ As a developer, I want clear API documentation for integrations.
+
+💰 Cost Calculation (Task Completed)
+
+The repository includes:
+
+📄 cost_calculation.md
+→ Contains estimated Azure cost for 1000 devices and 300 users, using:
+
+Azure App Service
+
+Azure VM (MQTT Broker)
+
+Azure PostgreSQL
+
+Outbound network traffic
+
+🧪 Testing Tools
+
+✔ Cloud Swagger UI
+✔ Postman
+✔ IoT device simulator (Python)
 
 👨‍💻 Authors
 
 Deniz Utku Çelebi
 Utku Deniz Duman
-Collegium Da Vinci – IoT & Cloud Computing Project
+Collegium Da Vinci – IoT & Cloud Computing Project (2025)
